@@ -1,14 +1,30 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { WebContainer } from "@webcontainer/api";
 
 export function useWebContainer() {
   const [webcontainer, setWebcontainer] = useState<WebContainer>();
+  const initializingRef = useRef(false);
 
-  async function main() {
-    const webcontainerInstance = await WebContainer.boot();
-    setWebcontainer(webcontainerInstance);
-  }
   useEffect(() => {
+    async function main() {
+      // Prevent multiple initialization attempts
+      if (initializingRef.current) return;
+      if (webcontainer) return;
+
+      initializingRef.current = true;
+
+      try {
+        const webcontainerInstance = await WebContainer.boot();
+        setWebcontainer(webcontainerInstance);
+        console.log(
+          "webcontainerInstance.workdir",
+          webcontainerInstance.workdir
+        );
+      } finally {
+        initializingRef.current = false;
+      }
+    }
+
     main();
 
     return () => {
@@ -16,7 +32,7 @@ export function useWebContainer() {
         webcontainer.teardown();
       }
     };
-  }, []);
+  }, [webcontainer]); // Include webcontainer in dependencies
 
   return webcontainer;
 }

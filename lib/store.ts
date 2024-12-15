@@ -327,7 +327,7 @@ const createInitialFileStructure = (): FileStructure[] => [
     name: "package.json",
     type: "file",
     content:
-      '{\n    "name": "my-portfolio",\n    "version": "1.0.0",\n    "private": true,\n    "dependencies": {\n        "react": "^17.0.2",\n        "react-dom": "^17.0.2",\n        "tailwindcss": "^2.2.19",\n        "autoprefixer": "^10.4.2",\n        "postcss": "^8.4.5",\n        "typescript": "^4.4.4",\n        "@testing-library/react": "^12.1.5"\n    },\n    "scripts": {\n        "build": "tsc && postcss src/styles/global.css -o src/styles/output.css",\n        "start": "webpack serve --mode development",\n        "test": "react-scripts test"\n    }\n}',
+      "{\n\"name\":\"my-portfolio\",\n\"version\":\"1.0.0\",\n\"private\":true,\n\"dependencies\":{\n\"devDependencies\":{\n\"@webcontainer/api\":\"^1.1.3\"\n},\n\"vite\":\"^4.1.0\",\n\"react\":\"^17.0.2\",\n\"react-dom\":\"^17.0.2\",\n\"tailwindcss\":\"^2.2.19\",\n\"autoprefixer\":\"^10.4.2\",\n\"postcss\":\"^8.4.5\",\n\"typescript\":\"^4.4.4\",\n\"@testing-library/react\":\"^12.1.5\"\n},\n\"scripts\":{\n\"build\":\"tsc && postcss src/styles/global.css -o src/styles/output.css\",\n\"start\":\"webpack serve --mode development\",\n\"test\":\"react-scripts test\"\n}\n}",
   },
 ];
 

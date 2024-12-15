@@ -1,30 +1,48 @@
 import { WebContainer } from "@webcontainer/api";
-import { useEffect } from "react";
+import { useEffect, useState } from "react";
 
 export default function Preview({
   webcontainer,
 }: {
   webcontainer: WebContainer | null;
 }) {
+  const [serverUrl, setServerUrl] = useState<string | null>(null);
+
   async function main() {
-    const installProcess = await webcontainer?.spawn("npm", ["install"]);
+    if (!webcontainer) return;
 
-    installProcess?.output.pipeTo(
-      new WritableStream({
+    try {
+      console.log("Starting installation...");
+      const installProcess = await webcontainer.spawn("npm", ["install"]);
+
+      const installOutput = new WritableStream({
         write(data) {
-          console.log(data);
+          console.log("Install output:", data);
         },
-      })
-    );
+      });
 
-    await webcontainer?.spawn("npm", ["run", "dev"]);
+      installProcess.output.pipeTo(installOutput);
+      await installProcess.exit;
 
-    // Wait for `server-ready` event
-    webcontainer?.on("server-ready", (port, url) => {
-      // ...
-      console.log(url);
-      console.log(port);
-    });
+      console.log("Starting development server...");
+      const startProcess = await webcontainer.spawn("npm", ["start"]);
+
+      startProcess.output.pipeTo(
+        new WritableStream({
+          write(data) {
+            console.log("Server output:", data);
+          },
+        })
+      );
+
+      // Listen for server ready event
+      webcontainer.on("server-ready", (port, url) => {
+        console.log("Server is ready on:", url);
+        setServerUrl(url);
+      });
+    } catch (error) {
+      console.error("Error in preview:", error);
+    }
   }
 
   useEffect(() => {
@@ -32,43 +50,18 @@ export default function Preview({
   }, [webcontainer]);
 
   return (
-    <div className="min-h-screen bg-white text-black p-8">
-      <header className="mb-8">
-        <h1 className="text-4xl font-bold">My Website</h1>
-        <nav className="mt-4">
-          <ul className="flex space-x-4">
-            <li>
-              <a href="#" className="text-blue-600 hover:underline">
-                Home
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-blue-600 hover:underline">
-                About
-              </a>
-            </li>
-            <li>
-              <a href="#" className="text-blue-600 hover:underline">
-                Contact
-              </a>
-            </li>
-          </ul>
-        </nav>
-      </header>
-      <main>
-        <h2 className="text-2xl font-semibold mb-4">Welcome to my website</h2>
-        <p className="mb-4">
-          This is a preview of the website you&apos;re creating. In a real
-          application, this content would be dynamically generated based on your
-          inputs and choices.
-        </p>
-        <button className="bg-blue-500 text-white px-4 py-2 rounded hover:bg-blue-600">
-          Learn More
-        </button>
-      </main>
-      <footer className="mt-8 text-center text-gray-500">
-        <p>&copy; My Website. All rights reserved.</p>
-      </footer>
+    <div className="h-full w-full">
+      {serverUrl ? (
+        <iframe
+          src={serverUrl}
+          className="w-full h-full border-0"
+          title="Preview"
+        />
+      ) : (
+        <div className="flex items-center justify-center h-full">
+          <p>Loading preview...</p>
+        </div>
+      )}
     </div>
   );
 }

@@ -220,21 +220,15 @@ export function FileExplorer() {
 
   useEffect(() => {
     async function startWebContainer() {
-      console.log("webcontainer initialization started");
+      if (!webcontainer || !files) return;
+
       try {
-        // Only proceed with mounting if we have both webcontainer and files
-        if (files) {
-          const tree = convertToWebContainerFormat(files);
-          console.log("tree: ", tree);
-          await webcontainer?.mount(tree);
-          webcontainer?.on("server-ready", (port, url) => {
-            console.log("webcontainer mounted");
-            console.log("port: ", port);
-            console.log("url: ", url);
-          });
-        }
+        console.log("Mounting files to webcontainer...");
+        const tree = convertToWebContainerFormat(files);
+        await webcontainer.mount(tree);
+        console.log("Files mounted successfully");
       } catch (error) {
-        console.error("WebContainer error:", error);
+        console.error("WebContainer mount error:", error);
       }
     }
 
@@ -245,7 +239,7 @@ export function FileExplorer() {
         webcontainer.teardown();
       }
     };
-  }, [files]);
+  }, [webcontainer, files]);
 
   const formatDocument = async () => {
     if (editorInstance && selectedFile) {
@@ -325,7 +319,7 @@ export function FileExplorer() {
                 )}
               </TabsContent>
               <TabsContent value="preview" className="h-[calc(100%-40px)]">
-                <Preview webcontainer={webcontainer} />
+                <Preview webcontainer={webcontainer!} />
               </TabsContent>
             </Tabs>
           </div>

@@ -9,9 +9,29 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@ai-sdk/anthropic": "^1.0.5",
+    "@ai-sdk/openai": "^1.0.8",
+    "@anthropic-ai/sdk": "^0.32.1",
+    "@monaco-editor/react": "^4.6.0",
+    "@radix-ui/react-scroll-area": "^1.2.2",
+    "@radix-ui/react-slot": "^1.1.1",
+    "@radix-ui/react-tabs": "^1.1.2",
+    "@webcontainer/api": "^1.5.1-internal.4",
+    "add": "^2.0.6",
+    "ai": "^4.0.18",
+    "axios": "^1.7.9",
+    "class-variance-authority": "^0.7.1",
+    "clsx": "^2.1.1",
+    "jsonrepair": "^3.11.1",
+    "langchain": "^0.3.7",
+    "lucide-react": "^0.468.0",
+    "next": "14.2.16",
+    "pnpm": "^9.15.0",
     "react": "^18",
     "react-dom": "^18",
-    "next": "14.2.16"
+    "tailwind-merge": "^2.5.5",
+    "tailwindcss-animate": "^1.0.7",
+    "zustand": "^5.0.2"
   },
   "devDependencies": {
     "typescript": "^5",
